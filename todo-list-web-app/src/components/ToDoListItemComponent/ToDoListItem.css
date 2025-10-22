@@ -1,0 +1,25 @@
+.ToDo-item{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 5px gray;
+    border-radius: 7px;
+    max-width: 25%;
+}
+
+.Title{
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.Date{
+    grid-column: 2 / 2;
+    grid-row: 1 / 2;
+}
+
+.Description{
+    grid-column: 1;
+    grid-row: 2;
+}
