@@ -4,10 +4,9 @@ import React, { forwardRef, Ref } from 'react';
 
 export function ToDoListItem ({item, id}: {item: ToDoItemModel, id: number}){
 
-    function handleOnDragStart(event: any){
+    const handleOnDragStart = (event: any) => {
         event.dataTransfer?.setData("itemId", `${id}`);
         event.dataTransfer?.setData("item", JSON.stringify(item));
-        console.log( event.dataTransfer?.getData("item"))
     }
     
     return( 
