@@ -1,15 +1,13 @@
-import { ToDoListItem } from "../ToDoListItemComponent/ToDoListItem";
+import { ToDoListState } from "../ToDoListStateComponent/ToDoListState";
 import "./ToDoList.css"
-import items from "../../data/ToDoItemModel.json"
 
 export function ToDoList(){
     return (
         <div className="ToDoList-container">
-            {
-               items.splice(0,3).map((value) => (
-                <ToDoListItem item={value}/>
-               ))
-            }
+            
+            <ToDoListState title="En cours"/>
+            <ToDoListState title="Terminées"/>
+            <ToDoListState title="Archivées"/>
         </div>
     );
 }
