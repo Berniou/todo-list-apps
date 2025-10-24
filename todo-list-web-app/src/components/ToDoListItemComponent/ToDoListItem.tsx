@@ -1,12 +1,13 @@
 import './ToDoListItem.css'
 import { ToDoItemModel } from '../../data/todoitem.model';
-import React, { forwardRef, Ref } from 'react';
 
-export function ToDoListItem ({item, id}: {item: ToDoItemModel, id: number}){
+export function ToDoListItem ({item, id, sendToParent}: {item: ToDoItemModel, id: number, sendToParent: Function}){
 
     const handleOnDragStart = (event: any) => {
         event.dataTransfer?.setData("itemId", `${id}`);
+        event.dataTransfer?.setData("itemStatus", `${item.status}`);
         event.dataTransfer?.setData("item", JSON.stringify(item));
+        sendToParent({id: id, status: item.status});
     }
     
     return( 

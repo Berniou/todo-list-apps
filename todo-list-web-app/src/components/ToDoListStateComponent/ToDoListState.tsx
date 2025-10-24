@@ -1,44 +1,92 @@
 import React, { useState, useEffect } from "react";
 import {ToDoListItem} from "../ToDoListItemComponent/ToDoListItem";
-
-import items from "../../data/ToDoItemModel.json";
-
-
-
-
-import "./ToDoListState.css"
 import { ToDoItemModel } from "../../data/todoitem.model";
 
-export function ToDoListState({title}: {title: string}){
-    const [list, setList] = useState<ToDoItemModel[]>(items.slice(0,1)); 
+import "./ToDoListState.css"
+import { ARCHIVEES, EN_COURS, TERMINEES } from "../../Constants";
+
+/*
+ * status is either 1, 10 or 100
+ * 1 is for OnWaiting
+ * 10 is for Finished
+ * 100 is for archived.
+ */
+export function ToDoListState({title, status, listParam}: {title: string, status: number, listParam: ToDoItemModel[]}){
+    
+    const [list, setList] = useState(listParam);
+    const [localId, setLocalId] = useState({id:-1, status:-1});
+    const ITEM_NAME = "item";
+    const ITEM_ID_NAME = "itemId";
+    const ITEM_STATUS_NAME = "itemStatus";
+    
+    let itemId = -1;
+    let itemStatus = -1;
+
+    const handleFromItem = (localId: {id:number, status:number}) => {
+        setLocalId(localId);
+    }
 
     const handleOnDragOver = (event: any) => {
-        if(title === "Terminées"){
-            event.preventDefault();
-        }
+       event.preventDefault();
     }
 
     const handleDrop = (event: any) => {
-         if(title === "Terminées"){
-            const stringedItem = event.dataTransfer?.getData("item");
-            const item: ToDoItemModel = JSON.parse(stringedItem);
-            const newList = [...list]; 
-            newList.push({...item, dateOfCreation: new Date(item.dateOfCreation).toDateString()});
-            setList(newList);
-            console.log(list);
+        try{
+            
+            itemStatus = parseInt(event.dataTransfer.getData(ITEM_STATUS_NAME));
+            const stringedItem = event.dataTransfer?.getData(ITEM_NAME);
+            itemId = parseInt(event.dataTransfer?.getData(ITEM_ID_NAME));
+
+            if(itemStatus === EN_COURS && status !== EN_COURS){
+                processDrop(stringedItem);
+            }
+            if(itemStatus === TERMINEES && status !== TERMINEES){
+                processDrop(stringedItem);
+            }
+            if(itemStatus === ARCHIVEES && status !== ARCHIVEES){
+                processDrop(stringedItem);
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    const processDrop = (param: string) => {
+        const item: ToDoItemModel = JSON.parse(param);
+        const newList = [...list]; 
+        newList.unshift({...item, dateOfCreation: new Date(item.dateOfCreation).toDateString(), status: status});
+        setList(newList);
+        //console.log(list);
+    }
+
+    const processRemove = () => {
+        let newList = [...list];
+        newList.splice(localId.id, 1);
+        console.log(newList);
+        setList(newList);
+        itemId = -1;
+        itemStatus = -1;
+    }
+
+
+    const handleDragEnd = (event:any)=>{
+        if(localId.status === status){
+            processRemove()
         }
     }
 
    
 
     return (
-        <div className="State-container" onDragOver={handleOnDragOver} onDrop={handleDrop}>
+        <div className="State-container">
             <h3>{title}</h3>
+            <div className="Items-container" onDragOver={handleOnDragOver} onDrop={handleDrop} onDragEnd={handleDragEnd}>
             {
                list.map((value, id) => (
-                <ToDoListItem key={id} item={value} id={id}/>
+                <ToDoListItem key={id} item={value} id={id} sendToParent={handleFromItem}/>
                ))
             }
+            </div>
         </div>
     );
 
