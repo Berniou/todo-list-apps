@@ -1,11 +1,15 @@
 import express from 'express';
+import cors from 'cors'
 import { ToDoItemService } from './todoitem.service';
 
 const api = express();
 
+const allow = cors()
+
 const todoItemService = new ToDoItemService();
 
 api.use(express.json());
+api.use(allow)
 
 api.get('/items', (req, res) => {   
     todoItemService.onGetAllItems()
