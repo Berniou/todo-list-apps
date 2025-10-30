@@ -18,9 +18,8 @@ export function ToDoListState({title, status, listParam}: {title: string, status
     const ITEM_NAME = "item";
     const ITEM_ID_NAME = "itemId";
     const ITEM_STATUS_NAME = "itemStatus";
-    
-    let itemId = -1;
-    let itemStatus = -1;
+    const [itemId, setItemId] = useState(-1);
+    const [itemStatus, setItemStatus] = useState(-1)
 
     const handleFromItem = (localId: {id:number, status:number}) => {
         setLocalId(localId);
@@ -33,9 +32,9 @@ export function ToDoListState({title, status, listParam}: {title: string, status
     const handleDrop = (event: any) => {
         try{
             
-            itemStatus = parseInt(event.dataTransfer.getData(ITEM_STATUS_NAME));
+            setItemStatus(parseInt(event.dataTransfer.getData(ITEM_STATUS_NAME)));
             const stringedItem = event.dataTransfer?.getData(ITEM_NAME);
-            itemId = parseInt(event.dataTransfer?.getData(ITEM_ID_NAME));
+            setItemId(parseInt(event.dataTransfer?.getData(ITEM_ID_NAME)));
 
             if(itemStatus === EN_COURS && status !== EN_COURS){
                 processDrop(stringedItem);
@@ -64,18 +63,20 @@ export function ToDoListState({title, status, listParam}: {title: string, status
         newList.splice(localId.id, 1);
         console.log(newList);
         setList(newList);
-        itemId = -1;
-        itemStatus = -1;
+        setItemId(-1);
+        setItemStatus(-1);
     }
 
 
     const handleDragEnd = (event:any)=>{
-        if(localId.status === status){
+        if(list.length === 0){
+            return;
+        }
+        
+        if(localId.status === status ){
             processRemove()
         }
     }
-
-   
 
     return (
         <div className="State-container">
