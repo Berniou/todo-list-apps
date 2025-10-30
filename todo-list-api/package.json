@@ -5,7 +5,7 @@
   "license": "ISC",
   "author": "Bernardo Mbangya",
   "type": "commonjs",
-  "main": "./src/index.ts",
+  "main": "./index.ts",
   "scripts": {
     "start": "node dist/index.js",
     "clean": "tsc --build --clean",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@types/express": "^5.0.3",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "postgres": "^3.4.7"
   }

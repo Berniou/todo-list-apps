@@ -6,22 +6,47 @@ export class ToDoItemService{
     todoItemDao = new ToDoItemDao();
 
     onGetToDoItemById(id: number): Promise<ToDoItemModel>{
-        return this.todoItemDao.fingItemById(id);
+        try{
+            return this.todoItemDao.fingItemById(id);
+        }catch(err){
+            console.log(err);
+            throw(err) ;
+        }      
     }
 
     onGetToDoItemByTitle(title: string): Promise<ToDoItemModel>{
-        return this.todoItemDao.fingItemByTitle(title);
+        try{
+            return this.todoItemDao.fingItemByTitle(title);
+        }catch(err){
+            console.log(err);
+            throw(err);
+        }  
     }
 
-    onsaveItem(item: ToDoItemModel): Promise<ToDoItemModel>{
-        return this.todoItemDao.saveItem(item);
+    onsaveItem(item: ToDoItemModel): Promise<ToDoItemModel | {code: number, message: string}>{
+        try{    
+            return this.todoItemDao.saveItem(item);
+        }catch(err){
+            console.log(err);
+            throw(err);
+        }  
     }
 
     onDelete(id: number): Promise<boolean>{
-        return this.todoItemDao.deleteItem(id);
+        try{
+            return this.todoItemDao.deleteItem(id);
+         }catch(err){
+            console.log(err);
+            throw(err)
+        }  
     }
 
     onGetAllItems(): Promise<ToDoItemModel[]>{
-        return this.todoItemDao.findAllItems();
+        try{
+            return this.todoItemDao.findAllItems();
+        }catch(err){
+            console.log(err);
+            throw(err);
+        }  
     }
 }

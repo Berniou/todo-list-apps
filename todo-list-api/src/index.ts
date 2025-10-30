@@ -1,5 +1,10 @@
-import { app } from "./todoitem.controler";
+import { app } from "./todoitem.controller";
+import 'dotenv/config'
 
-app.listen(3000, (err) => {
+const port = parseInt(process.env.PORT ?? "") || 3000
+const bdd =process.env.POSTGRES_DB;
+
+app.listen(port, (err: Error | undefined) => {
     console.log(err);
-})
+    //console.log("hello");
+});

@@ -1,5 +1,9 @@
+import postgres, { PostgresError, Sql } from "postgres";
 import sql from "./data.source";
 import { ToDoItemModel } from "./todoitem.model";
+
+const UNICITY_CODE_VIOLATION = '23505';
+const TITLE_UNICITY_CONSTRAINT = 'todoitems_title_key'
 
 export class ToDoItemDao{
     
@@ -9,7 +13,7 @@ export class ToDoItemDao{
                                 from todoitems
                                 where id = ${id}`;
 
-        return new ToDoItemModel(results.at(0))
+        return  ToDoItemModel.getFromRow(results.at(0));
     }
 
     async fingItemByTitle(title: string): Promise<ToDoItemModel>{
@@ -18,17 +22,32 @@ export class ToDoItemDao{
                                 from todoitems
                                 where title = ${title}`;
 
-        return new ToDoItemModel(results.at(0))
+        return ToDoItemModel.getFromRow(results.at(0));
     }
 
-    async saveItem(item: ToDoItemModel): Promise<ToDoItemModel>{
-        const results = await sql`
-                                insert into todoitems(id,title,description,dateOfCreation)
-                                values (${item.id},${item.title},${item.description},${item.dateOfCreation}) 
-                                On conflict do update set todoitems.id = excluded.id,  todoitems.title = excluded.title
+    async saveItem(item: ToDoItemModel): Promise<ToDoItemModel | {code: number, message: string}>{
+        const idValue: number | Sql = item.id ?? sql`DEFAULT`;
+
+        try {
+            const results = await sql`
+                                insert into todoitems(id,title,description,dateOfCreation,status)
+                                values (${idValue},${item.title},${item.description},${item.dateOfCreation},${item.status}) 
+                                on conflict (id) do update 
+                                set id = excluded.id, title = excluded.title,
+                                description = excluded.description, dateOfCreation = excluded.dateOfCreation,
+                                status = excluded.status
                                 returning *`;
 
-        return new ToDoItemModel(results.at(0));
+        return ToDoItemModel.getFromRow(results.at(0));
+        }
+        catch(err){
+            
+            if(err instanceof PostgresError && err.code === UNICITY_CODE_VIOLATION && err.constraint_name === TITLE_UNICITY_CONSTRAINT){
+                return {code: 400,  message: "Erreur : Ce titre existe déjà. Veuillez en choisir un autre."}
+            }
+            throw(err)
+        }
+        
     }
 
     async deleteItem(id: number): Promise<boolean>{
@@ -45,7 +64,7 @@ export class ToDoItemDao{
         const items: ToDoItemModel [] = [];
 
         for(let row of results){
-            items.push(new ToDoItemModel(row));
+            items.push(ToDoItemModel.getFromRow(row));
         }
         return items;
     }
