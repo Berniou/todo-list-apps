@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {ToDoListItem} from "../ToDoListItemComponent/ToDoListItem";
 import { ToDoItemModel } from "../../data/todoitem.model";
 
 import "./ToDoListState.css"
-import { ARCHIVEES, EN_COURS, TERMINEES } from "../../Constants";
 
 /*
  * status is either 1, 10 or 100
@@ -13,16 +12,18 @@ import { ARCHIVEES, EN_COURS, TERMINEES } from "../../Constants";
  */
 export function ToDoListState({title, status, listParam}: {title: string, status: number, listParam: ToDoItemModel[]}){
     
-    const [list, setList] = useState(listParam);
-    const [localId, setLocalId] = useState({id:-1, status:-1});
+    const [list, setList] = useState<ToDoItemModel[]>([]);
+    const [localId, setLocalId] = useState(-1);
     const ITEM_NAME = "item";
-    const ITEM_ID_NAME = "itemId";
-    const ITEM_STATUS_NAME = "itemStatus";
-    const [itemId, setItemId] = useState(-1);
-    const [itemStatus, setItemStatus] = useState(-1)
+    const ITEM_ID_STATUS = "itemStatus";
 
-    const handleFromItem = (localId: {id:number, status:number}) => {
+    useEffect(()=>{
+        setList(listParam);
+    }, [listParam])
+   
+    const handleFromItem = (localId: number) => {
         setLocalId(localId);
+
     }
 
     const handleOnDragOver = (event: any) => {
@@ -30,19 +31,10 @@ export function ToDoListState({title, status, listParam}: {title: string, status
     }
 
     const handleDrop = (event: any) => {
+        const stringedItem = event.dataTransfer?.getData(ITEM_NAME);
+        const itemStatus = parseInt(event.dataTransfer?.getData(ITEM_ID_STATUS));
         try{
-            
-            setItemStatus(parseInt(event.dataTransfer.getData(ITEM_STATUS_NAME)));
-            const stringedItem = event.dataTransfer?.getData(ITEM_NAME);
-            setItemId(parseInt(event.dataTransfer?.getData(ITEM_ID_NAME)));
-
-            if(itemStatus === EN_COURS && status !== EN_COURS){
-                processDrop(stringedItem);
-            }
-            if(itemStatus === TERMINEES && status !== TERMINEES){
-                processDrop(stringedItem);
-            }
-            if(itemStatus === ARCHIVEES && status !== ARCHIVEES){
+            if(itemStatus !== status){
                 processDrop(stringedItem);
             }
         }catch(err){
@@ -52,36 +44,21 @@ export function ToDoListState({title, status, listParam}: {title: string, status
 
     const processDrop = (param: string) => {
         const item: ToDoItemModel = JSON.parse(param);
-        const newList = [...list]; 
-        newList.unshift({...item, dateOfCreation: item.dateOfCreation, status: status});
+        const newList = [...list];
+        newList.unshift({...item, dateOfCreation: new Date(item.dateOfCreation), status: status});
         setList(newList);
-        //console.log(list);
     }
 
     const processRemove = () => {
         let newList = [...list];
-        newList.splice(localId.id, 1);
-        console.log(newList);
+        newList.splice(localId, 1);
         setList(newList);
-        setItemId(-1);
-        setItemStatus(-1);
-    }
-
-
-    const handleDragEnd = (event:any)=>{
-        if(list.length === 0){
-            return;
-        }
-        
-        if(localId.status === status ){
-            processRemove()
-        }
     }
 
     return (
         <div className="State-container">
             <h3>{title}</h3>
-            <div className="Items-container" onDragOver={handleOnDragOver} onDrop={handleDrop} onDragEnd={handleDragEnd}>
+            <div className="Items-container" onDragOver={handleOnDragOver} onDrop={handleDrop} >
             {
                list.map((value, id) => (
                 <ToDoListItem key={id} item={value} id={id} sendToParent={handleFromItem}/>

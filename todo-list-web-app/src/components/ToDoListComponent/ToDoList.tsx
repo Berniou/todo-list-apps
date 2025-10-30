@@ -1,18 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ARCHIVEES, EN_COURS, TERMINEES } from "../../Constants";
 import { ToDoListState } from "../ToDoListStateComponent/ToDoListState";
 import "./ToDoList.css"
-import items from "../../data/ToDoItemModel.json";
-
+import service from "../../services/todolist.service";
+import { ToDoItemModel } from "../../data/todoitem.model";
 
 export function ToDoList(){
 
-    useEffect(() => {
-        
-        
-        return () => {}
-    })
+    const [items,setItems] = useState<ToDoItemModel[]>([])
+    
+    useEffect(() => {   
+        service().then(value => {
+            console.log(value)
+            setItems(value)
+        });
+    }, [])
 
     return (
         <div className="ToDoList-container">
