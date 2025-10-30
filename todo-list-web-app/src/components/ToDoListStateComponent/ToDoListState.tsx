@@ -53,7 +53,7 @@ export function ToDoListState({title, status, listParam}: {title: string, status
     const processDrop = (param: string) => {
         const item: ToDoItemModel = JSON.parse(param);
         const newList = [...list]; 
-        newList.unshift({...item, dateOfCreation: new Date(item.dateOfCreation).toDateString(), status: status});
+        newList.unshift({...item, dateOfCreation: item.dateOfCreation, status: status});
         setList(newList);
         //console.log(list);
     }

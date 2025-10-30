@@ -5,7 +5,7 @@ export class ToDoItemModel{
     id!: number;
     title!: string;
     description!: string;
-    dateOfCreation!: Date | string;
+    dateOfCreation!: Date;
     status!: number;
 
 }
