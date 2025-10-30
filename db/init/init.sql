@@ -2,7 +2,7 @@
     id SERIAL PRIMARY KEY,
     title VARCHAR(1000),
     description VARCHAR(1000),
-    dateOfCreation DATETIME DEFAULT CURRENT_DATE,
+    dateOfCreation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status INTEGER,
     UNIQUE(title)
     );
