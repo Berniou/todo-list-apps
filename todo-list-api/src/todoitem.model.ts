@@ -14,7 +14,7 @@ export class ToDoItemModel{
             item.id = row.id;
             item.title = row.title;
             item.description = row.description;
-            item.dateOfCreation = new Date(row.dateOfCreation);
+            item.dateOfCreation = new Date(row['dateofcreation']);
             item.status = row.status;
         }
         return item;

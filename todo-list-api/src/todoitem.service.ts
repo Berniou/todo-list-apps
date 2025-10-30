@@ -23,7 +23,7 @@ export class ToDoItemService{
         }  
     }
 
-    onsaveItem(item: ToDoItemModel): Promise<ToDoItemModel | {code: number, message: string}>{
+    onsaveItem(item: ToDoItemModel): Promise<ToDoItemModel | {code: number, type: string, message: string}>{
         try{    
             return this.todoItemDao.saveItem(item);
         }catch(err){
