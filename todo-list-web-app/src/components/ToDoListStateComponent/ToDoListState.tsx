@@ -10,21 +10,18 @@ import "./ToDoListState.css"
  * 10 is for Finished
  * 100 is for archived.
  */
-export function ToDoListState({title, status, listParam}: {title: string, status: number, listParam: ToDoItemModel[]}){
+
+type props =  {title: string, status: number, listParam: ToDoItemModel[], sendToParent: (item: ToDoItemModel)=>void};
+
+export function ToDoListState({title, status, listParam, sendToParent}:props){
     
     const [list, setList] = useState<ToDoItemModel[]>([]);
-    const [localId, setLocalId] = useState(-1);
     const ITEM_NAME = "item";
     const ITEM_ID_STATUS = "itemStatus";
 
     useEffect(()=>{
         setList(listParam);
     }, [listParam])
-   
-    const handleFromItem = (localId: number) => {
-        setLocalId(localId);
-
-    }
 
     const handleOnDragOver = (event: any) => {
        event.preventDefault();
@@ -44,15 +41,12 @@ export function ToDoListState({title, status, listParam}: {title: string, status
 
     const processDrop = (param: string) => {
         const item: ToDoItemModel = JSON.parse(param);
-        const newList = [...list];
-        newList.unshift({...item, dateOfCreation: new Date(item.dateOfCreation), status: status});
-        setList(newList);
-    }
-
-    const processRemove = () => {
-        let newList = [...list];
-        newList.splice(localId, 1);
-        setList(newList);
+        sendToParent({...item, dateOfCreation: new Date(item.dateOfCreation), status: status})
+        // .then(updatedItem => {
+        //     const newList = [...list];
+        //     newList.unshift({...updatedItem, dateOfCreation: new Date(updatedItem.dateOfCreation)});
+        //     setList(newList);
+        // });
     }
 
     return (
@@ -61,7 +55,7 @@ export function ToDoListState({title, status, listParam}: {title: string, status
             <div className="Items-container" onDragOver={handleOnDragOver} onDrop={handleDrop} >
             {
                list.map((value, id) => (
-                <ToDoListItem key={id} item={value} id={id} sendToParent={handleFromItem}/>
+                <ToDoListItem key={id} item={value} id={id}/>
                ))
             }
             </div>

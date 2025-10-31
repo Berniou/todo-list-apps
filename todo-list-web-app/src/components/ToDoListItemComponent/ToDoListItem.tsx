@@ -1,12 +1,11 @@
 import './ToDoListItem.css'
 import { ToDoItemModel } from '../../data/todoitem.model';
 
-export function ToDoListItem ({item, id, sendToParent}: {item: ToDoItemModel, id: number, sendToParent: Function}){
+export function ToDoListItem ({item, id}: {item: ToDoItemModel, id: number}){
 
     const handleOnDragStart = (event: any) => {
         event.dataTransfer?.setData("itemStatus", `${item.status}`);
         event.dataTransfer?.setData("item", JSON.stringify(item));
-        sendToParent(id);
     }
     
     return( 
