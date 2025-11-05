@@ -1,0 +1,6 @@
+
+const EN_COURS = 1;
+const TERMINEES = 10;
+const ARCHIVEES = 100;
+
+export {EN_COURS, TERMINEES,ARCHIVEES}
